@@ -1,0 +1,394 @@
+--------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/rdeveaux/Dropbox (Personal)/Courses/Stat 161/Fall 2018/Quick
+> Tour.log
+  log type:  text
+ opened on:  29 Aug 2018, 16:29:51
+
+. display 2+2
+4
+
+. display 2 * ttail(20,2.1)
+.04861759
+
+. // load sample data and inspect
+/ is not a valid command name
+r(199);
+
+. sysuse lifeexp
+(Life expectancy, 1998)
+
+. desc
+
+Contains data from /Applications/Stata/ado/base/l/lifeexp.dta
+  obs:            68                          Life expectancy, 1998
+ vars:             6                          26 Mar 2016 09:40
+ size:         2,652                          (_dta has notes)
+--------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+--------------------------------------------------------------------------------
+region          byte    %12.0g     region     Region
+country         str28   %28s                  Country
+popgrowth       float   %9.0g               * Avg. annual % growth
+lexp            byte    %9.0g               * Life expectancy at birth
+gnppc           float   %9.0g               * GNP per capita
+safewater       byte    %9.0g               * 
+                                            * indicated variables have notes
+--------------------------------------------------------------------------------
+Sorted by: 
+
+. summarize lexp gnppc
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        lexp |         68    72.27941    4.715315         54         79
+       gnppc |         63    8674.857    10634.68        370      39980
+
+. list country gnppc if missing(gnppc)
+
+     +--------------------------------------+
+     |                      country   gnppc |
+     |--------------------------------------|
+  7. |       Bosnia and Herzegovina       . |
+ 40. |                 Turkmenistan       . |
+ 44. | Yugoslavia, FR (Serb./Mont.)       . |
+ 46. |                         Cuba       . |
+ 56. |                  Puerto Rico       . |
+     +--------------------------------------+
+
+. graph twoway scatter lexp gnppc, ///
+option / not allowed
+r(198);
+
+. title(Life Expectancy and GNP ) xtitle(GNP per capita)
+command title is unrecognized
+r(199);
+
+. // save the graph in PNG format
+/ is not a valid command name
+r(199);
+
+. graph export scatter.png, width(400) replace
+could not find Graph window
+r(693);
+
+. gen loggnppc = log(gnppc)
+(5 missing values generated)
+
+. regress lexp loggnppc
+
+      Source |       SS           df       MS      Number of obs   =        63
+-------------+----------------------------------   F(1, 61)        =     97.09
+       Model |  873.264865         1  873.264865   Prob > F        =    0.0000
+    Residual |  548.671643        61  8.99461709   R-squared       =    0.6141
+-------------+----------------------------------   Adj R-squared   =    0.6078
+       Total |  1421.93651        62  22.9344598   Root MSE        =    2.9991
+
+------------------------------------------------------------------------------
+        lexp |      Coef.   Std. Err.      t    P>|t|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    loggnppc |   2.768349   .2809566     9.85   0.000     2.206542    3.330157
+       _cons |   49.41502   2.348494    21.04   0.000     44.71892    54.11113
+------------------------------------------------------------------------------
+
+. predict plexp
+(option xb assumed; fitted values)
+(5 missing values generated)
+
+. graph twoway (scatter lexp loggnppc) (lfit lexp loggnppc) ///
+/ / / is not a twoway plot type
+r(198);
+
+. , title(Life Expectancy and GNP) xtitle(log GNP per capita)
+, is not a valid command name
+r(199);
+
+. graph export fit.png, width(400) replace
+could not find Graph window
+r(693);
+
+. list country lexp plexp if lexp < 55, clean
+
+       country   lexp      plexp  
+ 50.     Haiti     54   66.06985  
+
+. list gnppc
+
+     +-------+
+     | gnppc |
+     |-------|
+  1. |   810 |
+  2. |   460 |
+  3. | 26830 |
+  4. |   480 |
+  5. |  2180 |
+     |-------|
+  6. | 25380 |
+  7. |     . |
+  8. |  1220 |
+  9. |  4620 |
+ 10. |  5150 |
+     |-------|
+ 11. | 33040 |
+ 12. |  3360 |
+ 13. | 24280 |
+ 14. | 24210 |
+ 15. |   970 |
+     |-------|
+ 16. | 26570 |
+ 17. | 11740 |
+ 18. |  4510 |
+ 19. | 18710 |
+ 20. | 20090 |
+     |-------|
+ 21. |  1340 |
+ 22. |   380 |
+ 23. |  2420 |
+ 24. |  2540 |
+ 25. |  1290 |
+     |-------|
+ 26. |   380 |
+ 27. | 24780 |
+ 28. | 34310 |
+ 29. |  3910 |
+ 30. | 10670 |
+     |-------|
+ 31. |  1360 |
+ 32. |  2260 |
+ 33. |  3700 |
+ 34. |  9780 |
+ 35. | 14100 |
+     |-------|
+ 36. | 25580 |
+ 37. | 39980 |
+ 38. |   370 |
+ 39. |  3160 |
+ 40. |     . |
+     |-------|
+ 41. |   980 |
+ 42. | 21410 |
+ 43. |   950 |
+ 44. |     . |
+ 45. | 19170 |
+     |-------|
+ 46. |     . |
+ 47. |  1770 |
+ 48. |  1850 |
+ 49. |  1640 |
+ 50. |   410 |
+     |-------|
+ 51. |   740 |
+ 52. |  1740 |
+ 53. |  3840 |
+ 54. |  1896 |
+ 55. |  2990 |
+     |-------|
+ 56. |     . |
+ 57. |  4520 |
+ 58. | 29240 |
+ 59. |  8030 |
+ 60. |  1010 |
+     |-------|
+ 61. |  4630 |
+ 62. |  4990 |
+ 63. |  2470 |
+ 64. |  1520 |
+ 65. |  1760 |
+     |-------|
+ 66. |  2440 |
+ 67. |  6070 |
+ 68. |  3530 |
+     +-------+
+
+. // Load in some data already in STATA
+/ is not a valid command name
+r(199);
+
+. sysuse lifeexp
+no; data in memory would be lost
+r(4);
+
+. // Describe the dataset
+/ is not a valid command name
+r(199);
+
+. desc
+
+Contains data from /Applications/Stata/ado/base/l/lifeexp.dta
+  obs:            68                          Life expectancy, 1998
+ vars:             8                          26 Mar 2016 09:40
+ size:         3,196                          (_dta has notes)
+--------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+--------------------------------------------------------------------------------
+region          byte    %12.0g     region     Region
+country         str28   %28s                  Country
+popgrowth       float   %9.0g               * Avg. annual % growth
+lexp            byte    %9.0g               * Life expectancy at birth
+gnppc           float   %9.0g               * GNP per capita
+safewater       byte    %9.0g               * 
+loggnppc        float   %9.0g                 
+plexp           float   %9.0g                 Fitted values
+                                            * indicated variables have notes
+--------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+
+. //Summarize two variables 
+/ is not a valid command name
+r(199);
+
+. summarize lexp gnppc
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        lexp |         68    72.27941    4.715315         54         79
+       gnppc |         63    8674.857    10634.68        370      39980
+
+. //Find out if any countries are missing gnppc 
+/ is not a valid command name
+r(199);
+
+. list country gnppc if missing(gnppc)
+
+     +--------------------------------------+
+     |                      country   gnppc |
+     |--------------------------------------|
+  7. |       Bosnia and Herzegovina       . |
+ 40. |                 Turkmenistan       . |
+ 44. | Yugoslavia, FR (Serb./Mont.)       . |
+ 46. |                         Cuba       . |
+ 56. |                  Puerto Rico       . |
+     +--------------------------------------+
+
+. //A first graph
+/ is not a valid command name
+r(199);
+
+. graph twoway scatter lexp gnppc
+
+. do "/Users/rdeveaux/Dropbox (Personal)/Courses/Stat 161/Fall 2018/First Comman
+> ds.do"
+
+. // Load in some data already in STATA
+. sysuse lifeexp
+no; data in memory would be lost
+r(4);
+
+end of do-file
+
+r(4);
+
+. clear
+
+. do "/Users/rdeveaux/Dropbox (Personal)/Courses/Stat 161/Fall 2018/First Comman
+> ds.do"
+
+. // Load in some data already in STATA
+. sysuse lifeexp
+(Life expectancy, 1998)
+
+. // Describe the dataset
+. desc
+
+Contains data from /Applications/Stata/ado/base/l/lifeexp.dta
+  obs:            68                          Life expectancy, 1998
+ vars:             6                          26 Mar 2016 09:40
+ size:         2,652                          (_dta has notes)
+--------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+--------------------------------------------------------------------------------
+region          byte    %12.0g     region     Region
+country         str28   %28s                  Country
+popgrowth       float   %9.0g               * Avg. annual % growth
+lexp            byte    %9.0g               * Life expectancy at birth
+gnppc           float   %9.0g               * GNP per capita
+safewater       byte    %9.0g               * 
+                                            * indicated variables have notes
+--------------------------------------------------------------------------------
+Sorted by: 
+
+. //Summarize two variables 
+. summarize lexp gnppc
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        lexp |         68    72.27941    4.715315         54         79
+       gnppc |         63    8674.857    10634.68        370      39980
+
+. //Find out if any countries are missing gnppc 
+. list country gnppc if missing(gnppc)
+
+     +--------------------------------------+
+     |                      country   gnppc |
+     |--------------------------------------|
+  7. |       Bosnia and Herzegovina       . |
+ 40. |                 Turkmenistan       . |
+ 44. | Yugoslavia, FR (Serb./Mont.)       . |
+ 46. |                         Cuba       . |
+ 56. |                  Puerto Rico       . |
+     +--------------------------------------+
+
+. //A first graph
+. graph twoway scatter lexp gnppc
+
+. 
+end of do-file
+
+. do "/var/folders/q8/q4bvgqnx0270kmvm59zx8_qh0000gn/T//SD01182.000000"
+
+. // Load in some data already in STATA
+. sysuse lifeexp
+(Life expectancy, 1998)
+
+. // Describe the dataset
+. desc
+
+Contains data from /Applications/Stata/ado/base/l/lifeexp.dta
+  obs:            68                          Life expectancy, 1998
+ vars:             6                          26 Mar 2016 09:40
+ size:         2,652                          (_dta has notes)
+--------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+--------------------------------------------------------------------------------
+region          byte    %12.0g     region     Region
+country         str28   %28s                  Country
+popgrowth       float   %9.0g               * Avg. annual % growth
+lexp            byte    %9.0g               * Life expectancy at birth
+gnppc           float   %9.0g               * GNP per capita
+safewater       byte    %9.0g               * 
+                                            * indicated variables have notes
+--------------------------------------------------------------------------------
+Sorted by: 
+
+. //Summarize two variables 
+. summarize lexp gnppc
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+        lexp |         68    72.27941    4.715315         54         79
+       gnppc |         63    8674.857    10634.68        370      39980
+
+. //Find out if any countries are missing gnppc 
+. list country gnppc if missing(gnppc)
+
+     +--------------------------------------+
+     |                      country   gnppc |
+     |--------------------------------------|
+  7. |       Bosnia and Herzegovina       . |
+ 40. |                 Turkmenistan       . |
+ 44. | Yugoslavia, FR (Serb./Mont.)       . |
+ 46. |                         Cuba       . |
+ 56. |                  Puerto Rico       . |
+     +--------------------------------------+
+
+. //A first graph
+. graph twoway scatter lexp gnppc
+
+. 
+end of do-file
+
